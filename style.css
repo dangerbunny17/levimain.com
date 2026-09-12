@@ -1,0 +1,57 @@
+:root {
+  --main: #ff7a1f;
+  --bg: #050607;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+body {
+  font-family: "Oxanium", "Segoe UI", system-ui, sans-serif;
+  color: var(--main);
+}
+
+canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* scanlines */
+.scan {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0) 0 2px, rgba(0, 0, 0, .28) 2px 3px);
+  mix-blend-mode: multiply;
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 45%, transparent 45%, rgba(0, 0, 0, .75) 100%);
+}
+
+.quip {
+  position: fixed;
+  top: 80%; /* lattice.js moves this just below the animation */
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(38rem, calc(100% - 2rem));
+  margin: 0;
+  text-align: center;
+  font-weight: 300;
+  font-size: clamp(1rem, 2.4vw, 1.35rem);
+  letter-spacing: .04em;
+  line-height: 1.5;
+  text-shadow: 0 0 14px var(--bg), 0 0 4px var(--bg), 0 0 18px rgba(255, 122, 31, .35);
+}
