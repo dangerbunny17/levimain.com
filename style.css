@@ -55,3 +55,28 @@ canvas {
   line-height: 1.5;
   text-shadow: 0 0 14px var(--bg), 0 0 4px var(--bg), 0 0 18px rgba(255, 122, 31, .35);
 }
+
+/* sits inside the bottom-right corner mark */
+.credit {
+  position: fixed;
+  right: 48px;
+  bottom: 18px;
+  max-width: calc(100% - 96px);
+  text-align: right;
+  font-size: .75rem;
+  letter-spacing: .04em;
+  color: rgba(255, 122, 31, .7);
+}
+
+/* frame-rate readout, only added by lattice.js at /?fps */
+.fps {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  border: 1px solid rgba(255, 122, 31, .4);
+  background: rgba(5, 6, 7, .85);
+  font-size: .9rem;
+  font-variant-numeric: tabular-nums;
+}

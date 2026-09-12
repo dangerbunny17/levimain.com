@@ -137,7 +137,25 @@ function render(t) {
   ctx.restore();
 }
 
-function loop(ms) { render(ms / 1000); requestAnimationFrame(loop); }
+// ---------- frame-rate counter (only shown at /?fps) ----------
+const fpsEl = new URLSearchParams(location.search).has('fps') ? document.body.appendChild(document.createElement('div')) : null;
+let frames = 0, fpsStart = performance.now();
+if (fpsEl) {
+  fpsEl.className = 'fps';
+  fpsEl.textContent = reduce ? 'reduced motion: animation off' : '-- fps';
+}
+
+function loop(ms) {
+  render(ms / 1000);
+  if (fpsEl) {
+    frames++;
+    if (ms - fpsStart >= 500) {
+      fpsEl.textContent = Math.round((frames * 1000) / (ms - fpsStart)) + ' fps';
+      frames = 0; fpsStart = ms;
+    }
+  }
+  requestAnimationFrame(loop);
+}
 
 addEventListener('resize', () => { resize(); if (reduce) render(20); });
 resize();
