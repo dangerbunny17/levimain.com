@@ -66,9 +66,12 @@ function shape(points) {
   ctx.fill();
 }
 
-// The sides of a polygon drawn as long straight lines that run past the corners.
-// a = distance from center to each line, half = half the line length.
-function sideLines(a, half, rot, sides) {
+// The six sides of a hexagon, stretched along their own lines into a hexagram.
+// a = distance from center to each line; m = 0 ends at the hexagon corners, m = 1 ends exactly
+// at the star tips (distance 2a from center), so the lines meet there instead of crossing past.
+function sideLines(a, m, rot, sides) {
+  const half = (a / Math.sqrt(3)) * (1 + 2 * m);
+  ctx.lineCap = 'round';
   ctx.beginPath();
   for (let i = 0; i < sides; i++) {
     const th = rot + (i / sides) * TAU, nx = Math.cos(th), ny = Math.sin(th);
@@ -97,18 +100,19 @@ function sigil(t, s) {
   const turn = (k + seg(u, 4.6, 5.6)) * (Math.PI / 3);
   const split = seg(u, 4.4, 5) - seg(u, 5.3, 5.9);
 
-  pen(MAIN, 0.35, s * 0.012); circle(s * 0.92);
+  pen(MAIN, 0.35, s * 0.012); circle(s * 1.03);
   pen(MAIN, 0.6, s * 0.015); circle(s * 0.64);
 
   ctx.save(); ctx.rotate(turn);
-  pen(MAIN, 0.95, s * 0.018); sideLines(s * 0.5, s * (0.29 + 0.62 * ext), 0, 6);
+  // star tips land at 2a = 1.0, just inside the outer circle (1.03)
+  pen(MAIN, 0.95, s * 0.018); sideLines(s * 0.5, ext, 0, 6);
   ctx.restore();
 
   ctx.save(); ctx.rotate(-turn);
-  pen(MAIN, 0.45, s * 0.012); sideLines(s * 0.42, s * (0.24 + 0.6 * (1 - ext)), Math.PI / 6, 6);
+  pen(MAIN, 0.45, s * 0.012); sideLines(s * 0.42, 1 - ext, Math.PI / 6, 6);
   ctx.restore();
 
-  const [mx, my] = polar(s * 0.92, turn - Math.PI / 2);
+  const [mx, my] = polar(s * 1.03, turn - Math.PI / 2);
   pen(MAIN, 1); ctx.fillRect(mx - s * 0.025, my - s * 0.025, s * 0.05, s * 0.05);
 
   ctx.save(); ctx.rotate(turn); cube(s * 0.2, s * 0.08 * split); ctx.restore();
