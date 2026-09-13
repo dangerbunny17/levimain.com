@@ -66,17 +66,19 @@ function shape(points) {
   ctx.fill();
 }
 
-// The six sides of a hexagon, stretched along their own lines into a hexagram.
-// a = distance from center to each line; m = 0 ends at the hexagon corners, m = 1 ends exactly
-// at the star tips (distance 2a from center), so the lines meet there instead of crossing past.
-function sideLines(a, m, rot, sides) {
-  const half = (a / Math.sqrt(3)) * (1 + 2 * m);
+// The six sides of a hexagon, each stretched past one corner only, all the same way round: a pinwheel.
+// a = distance from center to each line; m = 0 is the plain hexagon, m = 1 puts each free end at
+// distance reach from center. Keep reach < 2a so a free end never touches another line.
+// spin = 1 or -1 picks which way the blades point.
+function sideLines(a, m, rot, sides, reach, spin) {
+  const corner = a / Math.sqrt(3);
+  const far = corner + (Math.sqrt(reach * reach - a * a) - corner) * m;
   ctx.lineCap = 'round';
   ctx.beginPath();
   for (let i = 0; i < sides; i++) {
     const th = rot + (i / sides) * TAU, nx = Math.cos(th), ny = Math.sin(th);
-    ctx.moveTo(nx * a - ny * half, ny * a + nx * half);
-    ctx.lineTo(nx * a + ny * half, ny * a - nx * half);
+    ctx.moveTo(nx * a + ny * corner * spin, ny * a - nx * corner * spin);
+    ctx.lineTo(nx * a - ny * far * spin, ny * a + nx * far * spin);
   }
   ctx.stroke();
 }
@@ -104,12 +106,13 @@ function sigil(t, s) {
   pen(MAIN, 0.6, s * 0.015); circle(s * 0.64);
 
   ctx.save(); ctx.rotate(turn);
-  // star tips land at 2a = 1.0, just inside the outer circle (1.03)
-  pen(MAIN, 0.95, s * 0.018); sideLines(s * 0.5, ext, 0, 6);
+  // blade tips stop at 0.97, just inside the outer circle (1.03)
+  pen(MAIN, 0.95, s * 0.018); sideLines(s * 0.5, ext, 0, 6, s * 0.97, 1);
   ctx.restore();
 
+  // faint set spins the opposite way to the bold one
   ctx.save(); ctx.rotate(-turn);
-  pen(MAIN, 0.45, s * 0.012); sideLines(s * 0.42, 1 - ext, Math.PI / 6, 6);
+  pen(MAIN, 0.45, s * 0.012); sideLines(s * 0.42, 1 - ext, Math.PI / 6, 6, s * 0.8, -1);
   ctx.restore();
 
   const [mx, my] = polar(s * 1.03, turn - Math.PI / 2);
