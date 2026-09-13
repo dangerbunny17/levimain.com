@@ -1,6 +1,6 @@
 :root {
-  --main: #ff7a1f;
-  --bg: #050607;
+  --main: #ffffff;
+  --bg: #0000aa;
 }
 
 * { box-sizing: border-box; }
@@ -25,35 +25,50 @@ canvas {
   display: block;
 }
 
-/* scanlines */
-.scan {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0) 0 2px, rgba(0, 0, 0, .28) 2px 3px);
-  mix-blend-mode: multiply;
-}
-
-.vignette {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(ellipse at 50% 45%, transparent 45%, rgba(0, 0, 0, .75) 100%);
-}
-
+/* phones and small windows: stacked under the animation */
 .quip {
   position: fixed;
-  top: 80%; /* lattice.js moves this just below the animation */
+  top: 80%; /* hero.js moves this just below the animation */
   left: 50%;
   transform: translateX(-50%);
   width: min(38rem, calc(100% - 2rem));
   margin: 0;
   text-align: center;
-  font-weight: 300;
-  font-size: clamp(1rem, 2.4vw, 1.35rem);
-  letter-spacing: .04em;
-  line-height: 1.5;
-  text-shadow: 0 0 14px var(--bg), 0 0 4px var(--bg), 0 0 18px rgba(255, 122, 31, .35);
+  font-family: "Bodoni Moda", Didot, Georgia, "Times New Roman", serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  font-size: clamp(1.5rem, 6.6vw, 2.5rem);
+  line-height: 1.15;
+  text-wrap: balance;
+  text-shadow: 0 0 14px var(--bg), 0 0 4px var(--bg);
+}
+
+/* desktop: animation on the left (hero.js), quip fills the right */
+@media (min-width: 1000px) {
+  .quip {
+    top: 50%;
+    left: 54%;
+    transform: translateY(-50%);
+    width: 40vw;
+    text-align: left;
+    font-size: clamp(3rem, 5.4vw, 7rem);
+    line-height: 1.02;
+  }
+}
+
+/* the quip is a quiet link: no underline until hovered or focused */
+.quip a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.quip a:hover,
+.quip a:focus-visible {
+  text-decoration: underline;
+  text-decoration-thickness: .06em;
+  text-underline-offset: .12em;
+  outline: none;
 }
 
 /* sits inside the bottom-right corner mark */
@@ -65,18 +80,18 @@ canvas {
   text-align: right;
   font-size: .75rem;
   letter-spacing: .04em;
-  color: rgba(255, 122, 31, .7);
+  color: rgba(255, 255, 255, .7);
 }
 
-/* frame-rate readout, only added by lattice.js at /?fps */
+/* frame-rate readout, only added by hero.js at /?fps */
 .fps {
   position: fixed;
   top: 16px;
   left: 50%;
   transform: translateX(-50%);
   padding: 4px 10px;
-  border: 1px solid rgba(255, 122, 31, .4);
-  background: rgba(5, 6, 7, .85);
+  border: 1px solid rgba(255, 255, 255, .4);
+  background: var(--bg);
   font-size: .9rem;
   font-variant-numeric: tabular-nums;
 }
