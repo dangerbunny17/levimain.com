@@ -66,20 +66,15 @@ function shape(points) {
   ctx.fill();
 }
 
-// The six sides of a hexagon, each stretched past one corner only, all the same way round: a pinwheel.
-// a = distance from center to each line; m = 0 is the plain hexagon, m = 1 puts each free end at
-// distance reach from center. Keep reach < 2a so a free end never touches another line.
-// spin = 1 or -1 picks which way the blades point.
-function sideLines(a, m, rot, sides, reach, spin) {
-  const corner = a / Math.sqrt(3);
-  const far = corner + (Math.sqrt(reach * reach - a * a) - corner) * m;
-  ctx.lineCap = 'round';
+// Hexagon outline. r = distance from center to each corner; rot turns the first corner off the x axis.
+function hexagon(r, rot) {
+  ctx.lineJoin = 'round';
   ctx.beginPath();
-  for (let i = 0; i < sides; i++) {
-    const th = rot + (i / sides) * TAU, nx = Math.cos(th), ny = Math.sin(th);
-    ctx.moveTo(nx * a + ny * corner * spin, ny * a - nx * corner * spin);
-    ctx.lineTo(nx * a - ny * far * spin, ny * a + nx * far * spin);
+  for (let i = 0; i < 6; i++) {
+    const [x, y] = polar(r, rot + (i / 6) * TAU);
+    i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
   }
+  ctx.closePath();
   ctx.stroke();
 }
 
@@ -95,7 +90,8 @@ function cube(r, spread) {
 }
 
 // ---------- scene ----------
-// 6 s loop: lines stretch out, hold, pull back, then everything turns 60° while the cube splits and closes.
+// 6 s loop: aperture opens (bold hexagon grows, faint one shrinks), holds, closes,
+// then everything turns 60° while the cube splits and closes.
 function sigil(t, s) {
   const P = 6, u = t % P, k = Math.floor(t / P);
   const ext = seg(u, 0.2, 1.4) - seg(u, 3.2, 4.4);
@@ -106,13 +102,14 @@ function sigil(t, s) {
   pen(MAIN, 0.6, s * 0.015); circle(s * 0.64);
 
   ctx.save(); ctx.rotate(turn);
-  // blade tips stop at 0.97, just inside the outer circle (1.03)
-  pen(MAIN, 0.95, s * 0.018); sideLines(s * 0.5, ext, 0, 6, s * 0.97, 1);
+  // bold: corners grow from 0.58 (rest) to 0.97, just inside the outer circle (1.03)
+  pen(MAIN, 0.95, s * 0.018); hexagon(s * (0.58 + 0.39 * ext), Math.PI / 6);
   ctx.restore();
 
-  // faint set spins the opposite way to the bold one
+  // faint: corners shrink from 0.44 (rest) to 0.28, just outside the cube (0.2). At rest it stays
+  // inside the bold hexagon's flat sides (0.5) at any angle, so the two never cross while turning.
   ctx.save(); ctx.rotate(-turn);
-  pen(MAIN, 0.45, s * 0.012); sideLines(s * 0.42, 1 - ext, Math.PI / 6, 6, s * 0.8, -1);
+  pen(MAIN, 0.45, s * 0.012); hexagon(s * (0.44 - 0.16 * ext), 0);
   ctx.restore();
 
   const [mx, my] = polar(s * 1.03, turn - Math.PI / 2);
